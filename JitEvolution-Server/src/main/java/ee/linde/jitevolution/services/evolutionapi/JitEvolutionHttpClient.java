@@ -1,21 +1,19 @@
-package ee.linde.jitevolution.services;
+package ee.linde.jitevolution.services.evolutionapi;
 
-import ee.linde.jitevolution.core.JitEvolutionApi;
-import ee.linde.jitevolution.models.configurations.Configuration;
-import ee.linde.jitevolution.core.Logger;
+import ee.linde.jitevolution.core.services.JitEvolutionApi;
+import ee.linde.jitevolution.core.models.configurations.Configuration;
+import ee.linde.jitevolution.core.services.Logger;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.concurrent.ExecutionException;
 
-public class HttpJitEvolutionApi implements JitEvolutionApi {
+public class JitEvolutionHttpClient implements JitEvolutionApi {
     private final Configuration config;
     private final HttpClient httpClient;
     private final Logger logger;
 
-    public HttpJitEvolutionApi(Configuration config, Logger logger) {
+    public JitEvolutionHttpClient(Configuration config, Logger logger) {
         this.config = config;
         this.httpClient = HttpClient.newHttpClient();
         this.logger = logger;

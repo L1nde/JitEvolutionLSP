@@ -1,4 +1,4 @@
-package ee.linde.jitevolution.models.configurations;
+package ee.linde.jitevolution.core.models.configurations;
 
 public class Configuration {
     private final String ApiUrl;

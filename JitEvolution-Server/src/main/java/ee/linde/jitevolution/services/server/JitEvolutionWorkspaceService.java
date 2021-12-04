@@ -1,4 +1,4 @@
-package ee.linde.jitevolution.server;
+package ee.linde.jitevolution.services.server;
 
 import org.eclipse.lsp4j.*;
 import org.eclipse.lsp4j.services.WorkspaceService;

@@ -1,7 +1,9 @@
-package ee.linde.jitevolution.server;
+package ee.linde.jitevolution.services.server;
 
-import ee.linde.jitevolution.models.configurations.Configuration;
-import ee.linde.jitevolution.services.HttpJitEvolutionApi;
+import ee.linde.jitevolution.core.contexts.JitContext;
+import ee.linde.jitevolution.core.models.configurations.Configuration;
+import ee.linde.jitevolution.services.logs.LanguageClientLogger;
+import ee.linde.jitevolution.services.evolutionapi.JitEvolutionHttpClient;
 import org.eclipse.lsp4j.*;
 import org.eclipse.lsp4j.services.*;
 
@@ -65,8 +67,6 @@ public class JitEvolutionLanguageServer implements LanguageServer, LanguageClien
     public void connect(LanguageClient languageClient) {
         // Get the client which started this LS.
         var logger = new LanguageClientLogger(languageClient);
-        this.textDocumentService.setLogger(logger);
-        this.textDocumentService.setClient(languageClient);
-        this.textDocumentService.setJitEvolutionApi(new HttpJitEvolutionApi(config, logger));
+        this.textDocumentService.setContext(new JitContext(logger, languageClient, new JitEvolutionHttpClient(config, logger)));
     }
 }

@@ -1,6 +1,6 @@
-package ee.linde.jitevolution.server;
+package ee.linde.jitevolution.services.logs;
 
-import ee.linde.jitevolution.core.Logger;
+import ee.linde.jitevolution.core.services.Logger;
 import org.eclipse.lsp4j.MessageParams;
 import org.eclipse.lsp4j.MessageType;
 import org.eclipse.lsp4j.services.LanguageClient;

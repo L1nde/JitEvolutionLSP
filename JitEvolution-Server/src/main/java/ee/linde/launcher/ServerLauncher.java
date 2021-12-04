@@ -1,7 +1,7 @@
 package ee.linde.launcher;
 
-import ee.linde.jitevolution.models.configurations.Configuration;
-import ee.linde.jitevolution.server.JitEvolutionLanguageServer;
+import ee.linde.jitevolution.core.models.configurations.Configuration;
+import ee.linde.jitevolution.services.server.JitEvolutionLanguageServer;
 import org.eclipse.lsp4j.launch.LSPLauncher;
 
 import java.io.InputStream;

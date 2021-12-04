@@ -1,4 +1,4 @@
-package ee.linde.jitevolution.core;
+package ee.linde.jitevolution.core.services;
 
 public interface Logger {
     void log(String message);
