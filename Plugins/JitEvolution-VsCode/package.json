@@ -26,18 +26,62 @@
 				"configuration": "./language-configuration.json"
 			}
 		],
-		"configuration":[
+		"configuration": [
 			{
 				"title": "Jit evolution",
 				"properties": {
 					"jitevolution.api": {
-						"type":"string",
-						"default": "http://localhost:80",
+						"type": "string",
+						"default": "http://localhost:5259",
 						"description": "Jit evolution api url"
+					},
+					"jitevolution.url": {
+						"type": "string",
+						"default": "http://localhost:8080",
+						"description": "Jit evolution visualiztion url"
+					},
+					"jitevolution.api-key": {
+						"type": "string",
+						"default": "ZWluYXI6wzCyI0HF+R5fzQK/MAxNqA==",
+						"description": "Jit evolution api key"
 					}
 				}
 			}
-		]
+		],
+		"commands": [
+			{
+				"command": "jit-evolution.open",
+				"title": "Open JitEvolution",
+				"category": "JitEvolution",
+				"icon": {
+					"light": "./src/assets/img/evolution.gif",
+					"dark": "./src/assets/img/evolution.gif"
+				}
+			},
+			{
+				"command": "jit-evolution.send",
+				"title": "Send to JitEvolution",
+				"category": "JitEvolution",
+				"icon": {
+					"light": "./src/assets/img/analyze-light.png",
+					"dark": "./src/assets/img/analyze.png"
+				}
+			}
+		],
+		"menus": {
+			"editor/title": [
+				{
+					"when": "resourceLangId == jitevolution",
+					"command": "jit-evolution.open",
+					"group": "navigation"
+				},
+				{
+					"when": "resourceLangId == jitevolution",
+					"command": "jit-evolution.send",
+					"group": "navigation"
+				}
+			]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",

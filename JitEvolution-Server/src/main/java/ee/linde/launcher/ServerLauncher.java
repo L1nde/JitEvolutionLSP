@@ -2,10 +2,10 @@ package ee.linde.launcher;
 
 import ee.linde.jitevolution.core.models.configurations.Configuration;
 import ee.linde.jitevolution.services.server.JitEvolutionLanguageServer;
+import ee.linde.jitevolution.services.utils.ProjectConfigs;
 import org.eclipse.lsp4j.launch.LSPLauncher;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
@@ -13,11 +13,12 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class ServerLauncher {
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
+    public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
+        String projectId = ProjectConfigs.ensureProjectConfigs();
         // As we are using system std io channels
         // we need to reset and turn off the logging globally
         // So our client->server communication doesn't get interrupted.
-        Configuration config = new Configuration(args[0]);
+        Configuration config = new Configuration(args[0], args[1], projectId, args[2], args[3]);
         LogManager.getLogManager().reset();
         Logger globalLogger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
         globalLogger.setLevel(Level.OFF);

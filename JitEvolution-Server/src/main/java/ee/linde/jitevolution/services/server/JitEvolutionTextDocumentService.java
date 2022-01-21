@@ -33,7 +33,10 @@ public class JitEvolutionTextDocumentService implements TextDocumentService {
     @Override
     public CompletableFuture<List<? extends CodeLens>> codeLens(CodeLensParams codeLensParams) {
         context.getLogger().log("Codelens");
-        return CompletableFuture.supplyAsync(ArrayList::new);
+        var codeLen = new CodeLens(new Range(new Position(), new Position()), new Command("Test", "test"), "");
+        var lens = new ArrayList<CodeLens>();
+        lens.add(codeLen);
+        return CompletableFuture.supplyAsync(() -> lens);
     }
 
     @Override
@@ -44,27 +47,27 @@ public class JitEvolutionTextDocumentService implements TextDocumentService {
 
     @Override
     public void didOpen(DidOpenTextDocumentParams didOpenTextDocumentParams) {
-        context.getEvolutionApi().notifyFileOpened("Open: " + didOpenTextDocumentParams.getTextDocument().getUri());
+        context.getEvolutionApi().notifyFileOpened(didOpenTextDocumentParams.getTextDocument());
     }
 
     @Override
     public void didChange(DidChangeTextDocumentParams didChangeTextDocumentParams) {
-        context.getEvolutionApi().notifyFileOpened("Change: " + didChangeTextDocumentParams.getTextDocument().getUri());
+        context.getEvolutionApi().notifyFileOpened(didChangeTextDocumentParams.getTextDocument());
     }
 
     @Override
     public void didClose(DidCloseTextDocumentParams didCloseTextDocumentParams) {
-        context.getEvolutionApi().notifyFileOpened("Close: " + didCloseTextDocumentParams.getTextDocument().getUri());
+        context.getEvolutionApi().notifyFileOpened(didCloseTextDocumentParams.getTextDocument());
     }
 
     @Override
     public void didSave(DidSaveTextDocumentParams didSaveTextDocumentParams) {
-        context.getEvolutionApi().notifyFileOpened("Save: " + didSaveTextDocumentParams.getTextDocument().getUri());
+        context.getEvolutionApi().notifyFileOpened(didSaveTextDocumentParams.getTextDocument());
     }
 
     @Override
     public CompletableFuture<List<ColorInformation>> documentColor(DocumentColorParams params) {
-        context.getEvolutionApi().notifyFileOpened("Color: " + params.getTextDocument().getUri());
+        context.getEvolutionApi().notifyFileOpened(params.getTextDocument());
         return CompletableFuture.completedFuture(new ArrayList<>());
     }
 }

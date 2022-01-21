@@ -12,7 +12,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class JitEvolutionLanguageServer implements LanguageServer, LanguageClientAware {
     private final JitEvolutionTextDocumentService textDocumentService;
-    private final WorkspaceService workspaceService;
+    private final JitEvolutionWorkspaceService workspaceService;
     private final Configuration config;
     private int errorCode = 1;
 
@@ -35,6 +35,12 @@ public class JitEvolutionLanguageServer implements LanguageServer, LanguageClien
         initializeResult.getCapabilities().setCodeLensProvider(len);
         initializeResult.getCapabilities().setExecuteCommandProvider(new ExecuteCommandOptions(Arrays.asList("test", "ass")));
         initializeResult.getCapabilities().setColorProvider(new ColorProviderOptions());
+//        var workspaceFoldersOptions = new WorkspaceFoldersOptions();
+//        workspaceFoldersOptions.setSupported(true);
+//        workspaceFoldersOptions.setChangeNotifications(true);
+//        var workspace = new WorkspaceServerCapabilities();
+//        workspace.setWorkspaceFolders(workspaceFoldersOptions);
+//        initializeResult.getCapabilities().setWorkspace(workspace);
         return CompletableFuture.supplyAsync(()->initializeResult);
     }
 
@@ -67,6 +73,8 @@ public class JitEvolutionLanguageServer implements LanguageServer, LanguageClien
     public void connect(LanguageClient languageClient) {
         // Get the client which started this LS.
         var logger = new LanguageClientLogger(languageClient);
-        this.textDocumentService.setContext(new JitContext(logger, languageClient, new JitEvolutionHttpClient(config, logger)));
+        var context = new JitContext(logger, languageClient, new JitEvolutionHttpClient(config, logger), this.config);
+        this.textDocumentService.setContext(context);
+        this.workspaceService.setContext(context);
     }
 }
