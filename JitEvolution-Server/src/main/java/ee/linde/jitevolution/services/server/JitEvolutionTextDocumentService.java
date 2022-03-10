@@ -1,6 +1,8 @@
 package ee.linde.jitevolution.services.server;
 
 import ee.linde.jitevolution.core.contexts.JitContext;
+import ee.linde.jitevolution.services.utils.ProjectConfigs;
+import ee.linde.jitevolution.services.utils.TextDocumentExtensions;
 import org.eclipse.lsp4j.*;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.eclipse.lsp4j.services.TextDocumentService;
@@ -52,7 +54,7 @@ public class JitEvolutionTextDocumentService implements TextDocumentService {
 
     @Override
     public void didChange(DidChangeTextDocumentParams didChangeTextDocumentParams) {
-        context.getEvolutionApi().notifyFileOpened(didChangeTextDocumentParams.getTextDocument());
+        context.getEvolutionApi().notifyFileChanged(didChangeTextDocumentParams.getTextDocument());
     }
 
     @Override
@@ -62,7 +64,14 @@ public class JitEvolutionTextDocumentService implements TextDocumentService {
 
     @Override
     public void didSave(DidSaveTextDocumentParams didSaveTextDocumentParams) {
-        context.getEvolutionApi().notifyFileOpened(didSaveTextDocumentParams.getTextDocument());
+        try {
+            var projectId = ProjectConfigs.ensureProjectConfigs();
+            var zip = TextDocumentExtensions.zipProject(context.getConfiguration().getFileExtension());
+            context.getEvolutionApi().notifyFileSaved(didSaveTextDocumentParams.getTextDocument().getUri(), zip);
+            zip.delete();
+        } catch (Exception e) {
+            context.getLogger().logError("Unable to zip project");
+        }
     }
 
     @Override

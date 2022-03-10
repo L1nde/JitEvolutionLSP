@@ -37,7 +37,7 @@
 					},
 					"jitevolution.url": {
 						"type": "string",
-						"default": "http://localhost:8080",
+						"default": "https://evolution.linde.ee",
 						"description": "Jit evolution visualiztion url"
 					},
 					"jitevolution.api-key": {

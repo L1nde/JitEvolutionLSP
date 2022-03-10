@@ -55,6 +55,25 @@ public class JitEvolutionHttpClient implements JitEvolutionApi {
         }
     }
 
+    public void notifyFileChanged(TextDocumentIdentifier textDocumentIdentifier) {
+        logger.log("Change");
+    }
+
+    public void notifyFileSaved(String fileUri, File project) {
+        try {
+            var data = new HashMap<>();
+            data.put("projectId", config.getProjectId());
+            data.put("projectZip", project.toPath());
+            data.put("uri", TextDocumentExtensions.GetFileRelativePath(fileUri));
+            var request = createPostFormRequest("/ide/file-saved", data);
+
+            var response = httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).get();
+            logger.log(response.body());
+        } catch (URISyntaxException | IOException | InterruptedException | ExecutionException e) {
+            logger.logError(e.getMessage());
+        }
+    }
+
     public void createProject(String projectId, File project) {
         var data = new HashMap<>();
         data.put("projectId", projectId);
@@ -68,11 +87,10 @@ public class JitEvolutionHttpClient implements JitEvolutionApi {
         } catch (IOException | InterruptedException | ExecutionException e) {
             logger.logError(e.getMessage());
         }
-
     }
 
     private void notifyFileOpened(String fileUri) {
-        JsonObject requestJson = new JsonObject();
+        var requestJson = new JsonObject();
         requestJson.addProperty("projectId", config.getProjectId());
         requestJson.addProperty("fileUri", fileUri);
         var request = createPostJsonRequest("/ide/file-opened", requestJson);

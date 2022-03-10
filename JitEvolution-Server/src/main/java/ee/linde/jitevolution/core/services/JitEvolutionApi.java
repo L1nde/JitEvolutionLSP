@@ -9,4 +9,6 @@ public interface JitEvolutionApi {
     void notifyFileOpened(TextDocumentIdentifier textDocumentIdentifier);
     void notifyFileOpened(TextDocumentItem item);
     void createProject(String projectId, File project);
+    void notifyFileChanged(TextDocumentIdentifier textDocumentIdentifier);
+    void notifyFileSaved(String fileUri, File project);
 }

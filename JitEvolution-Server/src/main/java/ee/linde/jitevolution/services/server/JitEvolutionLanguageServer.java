@@ -24,24 +24,27 @@ public class JitEvolutionLanguageServer implements LanguageServer, LanguageClien
 
     @Override
     public CompletableFuture<InitializeResult> initialize(InitializeParams initializeParams) {
-        // Initialize the InitializeResult for this LS.
-        final InitializeResult initializeResult = new InitializeResult(new ServerCapabilities());
-        // Set the capabilities of the LS to inform the client.
-        initializeResult.getCapabilities().setTextDocumentSync(TextDocumentSyncKind.Full);
-        CompletionOptions completionOptions = new CompletionOptions();
-        initializeResult.getCapabilities().setCompletionProvider(completionOptions);
-        CodeLensOptions len = new CodeLensOptions();
-        len.setResolveProvider(true);
-        initializeResult.getCapabilities().setCodeLensProvider(len);
-        initializeResult.getCapabilities().setExecuteCommandProvider(new ExecuteCommandOptions(Arrays.asList("test", "ass")));
-        initializeResult.getCapabilities().setColorProvider(new ColorProviderOptions());
-//        var workspaceFoldersOptions = new WorkspaceFoldersOptions();
-//        workspaceFoldersOptions.setSupported(true);
-//        workspaceFoldersOptions.setChangeNotifications(true);
-//        var workspace = new WorkspaceServerCapabilities();
-//        workspace.setWorkspaceFolders(workspaceFoldersOptions);
-//        initializeResult.getCapabilities().setWorkspace(workspace);
-        return CompletableFuture.supplyAsync(()->initializeResult);
+        var capabilities = new ServerCapabilities();
+
+        capabilities.setTextDocumentSync(getSyncOptions());
+        capabilities.setExecuteCommandProvider(new ExecuteCommandOptions());
+        capabilities.setColorProvider(new ColorProviderOptions());
+
+//        var completionOptions = new CompletionOptions();
+//        capabilites.setCompletionProvider(completionOptions);
+//        CodeLensOptions len = new CodeLensOptions();
+//        len.setResolveProvider(true);
+//        capabilites.setCodeLensProvider(len);
+
+        return CompletableFuture.supplyAsync(()->new InitializeResult(capabilities));
+    }
+
+    private TextDocumentSyncOptions getSyncOptions() {
+        var syncOptions = new TextDocumentSyncOptions();
+        syncOptions.setChange(TextDocumentSyncKind.Incremental);
+        syncOptions.setSave(new SaveOptions(true));
+
+        return syncOptions;
     }
 
     @Override

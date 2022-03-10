@@ -3,6 +3,7 @@ package ee.linde.jitevolution.services.server;
 import ee.linde.jitevolution.core.constants.CommandType;
 import ee.linde.jitevolution.core.contexts.JitContext;
 import ee.linde.jitevolution.services.utils.ProjectConfigs;
+import ee.linde.jitevolution.services.utils.TextDocumentExtensions;
 import org.eclipse.lsp4j.*;
 import org.eclipse.lsp4j.services.WorkspaceService;
 
@@ -56,29 +57,12 @@ public class JitEvolutionWorkspaceService implements WorkspaceService {
     private void sendProjectToApi(){
         try {
             var projectId = ProjectConfigs.ensureProjectConfigs();
-            var projectDirectoryPath = new File("").toPath().toAbsolutePath();
-            var tempFile = File.createTempFile("jit", "evolution.zip");
-            var zos = new ZipOutputStream(new FileOutputStream(tempFile));
-            Files.walkFileTree(projectDirectoryPath, new SimpleFileVisitor<>() {
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    if(file.toString().endsWith(context.getConfiguration().getFileExtension())){
-                        zos.putNextEntry(new ZipEntry(projectDirectoryPath.relativize(file).toString()));
-                        Files.copy(file, zos);
-                        zos.closeEntry();
-                    }
-
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-            zos.close();
-
-            context.getEvolutionApi().createProject(projectId, tempFile);
-
-            tempFile.delete();
+            var zip = TextDocumentExtensions.zipProject(context.getConfiguration().getFileExtension());
+            context.getEvolutionApi().createProject(projectId, zip);
+            zip.delete();
         } catch (Exception e) {
             context.getLogger().logError("Unable to zip project");
         }
-
     }
 
     @Override
