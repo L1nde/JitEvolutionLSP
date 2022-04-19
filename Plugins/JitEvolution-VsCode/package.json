@@ -3,6 +3,8 @@
 	"displayName": "JitEvolution-VsCode",
 	"description": "Plugin for VsCode to integrate it with GraphifyEvolution",
 	"version": "0.0.1",
+	"publisher": "linde",
+	"repository": {"url": "https://github.com/L1nde/JitEvolutionLSP"},
 	"engines": {
 		"vscode": "^1.61.0"
 	},
@@ -32,7 +34,7 @@
 				"properties": {
 					"jitevolution.api": {
 						"type": "string",
-						"default": "http://localhost:5259",
+						"default": "https://evolution-api.linde.ee",
 						"description": "Jit evolution api url"
 					},
 					"jitevolution.url": {
