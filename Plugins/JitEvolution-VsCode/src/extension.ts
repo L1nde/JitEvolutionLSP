@@ -18,10 +18,12 @@ export function activate(context: vscode.ExtensionContext) {
 
 		// path to the launcher.jar
 		let classPath = path.join(__dirname, '..', '..', '..', 'JitEvolution-Server', 'target', 'JitEvolution-Server.jar');
+		//let classPath = path.join(__dirname, '..', 'JitEvolution-Server.jar');
 		//Todo: This has debugging parameters
 		const config = vscode.workspace.getConfiguration('jitevolution');
 
-		const args: string[] = ['-cp', classPath, "-Xdebug", "-Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n,quiet=y"];
+		const args: string[] = ['-cp', classPath, "-Xdebug", "-Xrunjdwp:server=y,transport=dt_socket,address=8003,suspend=n,quiet=y"];
+		//const args: string[] = ['-cp', classPath];
 		
 		// Set the server options
 		// -- java execution path

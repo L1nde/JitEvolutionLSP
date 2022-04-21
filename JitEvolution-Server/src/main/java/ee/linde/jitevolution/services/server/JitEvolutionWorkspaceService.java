@@ -1,34 +1,25 @@
 package ee.linde.jitevolution.services.server;
 
 import ee.linde.jitevolution.core.constants.CommandType;
-import ee.linde.jitevolution.core.contexts.JitContext;
+import ee.linde.jitevolution.core.models.configurations.Configuration;
+import ee.linde.jitevolution.core.services.JitEvolutionApi;
+import ee.linde.jitevolution.core.services.Logger;
 import ee.linde.jitevolution.services.utils.ProjectConfigs;
 import ee.linde.jitevolution.services.utils.TextDocumentExtensions;
 import org.eclipse.lsp4j.*;
 import org.eclipse.lsp4j.services.WorkspaceService;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+
 
 public class JitEvolutionWorkspaceService implements WorkspaceService {
-    private JitContext context;
-
-    public void setContext(JitContext context){
-        this.context = context;
-    }
+    private Logger logger;
+    private Configuration config;
+    private JitEvolutionApi api;
 
     @Override
     public CompletableFuture<Object> executeCommand(ExecuteCommandParams params) {
@@ -40,7 +31,7 @@ public class JitEvolutionWorkspaceService implements WorkspaceService {
                 sendProjectToApi();
                 break;
             default:
-                context.getLogger().logError(String.format("Command '%s' is not supported", params.getCommand()));
+                logger.logError(String.format("Command '%s' is not supported", params.getCommand()));
         }
         return null;
     }
@@ -48,26 +39,21 @@ public class JitEvolutionWorkspaceService implements WorkspaceService {
     private void openVisualization(){
         Desktop desktop = Desktop.getDesktop();
         try {
-            desktop.browse(new URI(context.getConfiguration().getVisualizationUrl()));
+            desktop.browse(new URI(config.getVisualizationUrl()));
         } catch (IOException | URISyntaxException e) {
-            context.getLogger().logError(String.format("Failed to open url '%s' in browser", context.getConfiguration().getVisualizationUrl()));
+            logger.logError(String.format("Failed to open url '%s' in browser", config.getVisualizationUrl()));
         }
     }
 
     private void sendProjectToApi(){
         try {
             var projectId = ProjectConfigs.ensureProjectConfigs();
-            var zip = TextDocumentExtensions.zipProject(context.getConfiguration().getFileExtension());
-            context.getEvolutionApi().createProject(projectId, zip);
+            var zip = TextDocumentExtensions.zipProject(config.getFileExtension());
+            api.createProject(projectId, zip);
             zip.delete();
         } catch (Exception e) {
-            context.getLogger().logError("Unable to zip project");
+            logger.logError("Unable to zip project");
         }
-    }
-
-    @Override
-    public CompletableFuture<List<? extends SymbolInformation>> symbol(WorkspaceSymbolParams workspaceSymbolParams) {
-        return null;
     }
 
     @Override
@@ -76,11 +62,18 @@ public class JitEvolutionWorkspaceService implements WorkspaceService {
 
     @Override
     public void didChangeWatchedFiles(DidChangeWatchedFilesParams didChangeWatchedFilesParams) {
-        context.getLogger().log("Watched");
+        logger.log("Watched");
     }
 
-    @Override
-    public void didChangeWorkspaceFolders(DidChangeWorkspaceFoldersParams params) {
-        context.getLogger().log("Folders");
+    public void setLogger(Logger logger) {
+        this.logger = logger;
+    }
+
+    public void setConfig(Configuration config) {
+        this.config = config;
+    }
+
+    public void setApi(JitEvolutionApi api) {
+        this.api = api;
     }
 }

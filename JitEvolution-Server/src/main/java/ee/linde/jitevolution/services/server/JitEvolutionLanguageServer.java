@@ -1,13 +1,11 @@
 package ee.linde.jitevolution.services.server;
 
-import ee.linde.jitevolution.core.contexts.JitContext;
 import ee.linde.jitevolution.core.models.configurations.Configuration;
 import ee.linde.jitevolution.services.logs.LanguageClientLogger;
 import ee.linde.jitevolution.services.evolutionapi.JitEvolutionHttpClient;
 import org.eclipse.lsp4j.*;
 import org.eclipse.lsp4j.services.*;
 
-import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
 public class JitEvolutionLanguageServer implements LanguageServer, LanguageClientAware {
@@ -19,7 +17,7 @@ public class JitEvolutionLanguageServer implements LanguageServer, LanguageClien
     public JitEvolutionLanguageServer(Configuration config) {
         this.config = config;
         this.workspaceService = new JitEvolutionWorkspaceService();
-        this.textDocumentService = new JitEvolutionTextDocumentService(this.workspaceService);
+        this.textDocumentService = new JitEvolutionTextDocumentService();
     }
 
     @Override
@@ -29,12 +27,6 @@ public class JitEvolutionLanguageServer implements LanguageServer, LanguageClien
         capabilities.setTextDocumentSync(getSyncOptions());
         capabilities.setExecuteCommandProvider(new ExecuteCommandOptions());
         capabilities.setColorProvider(new ColorProviderOptions());
-
-//        var completionOptions = new CompletionOptions();
-//        capabilites.setCompletionProvider(completionOptions);
-//        CodeLensOptions len = new CodeLensOptions();
-//        len.setResolveProvider(true);
-//        capabilites.setCodeLensProvider(len);
 
         return CompletableFuture.supplyAsync(()->new InitializeResult(capabilities));
     }
@@ -76,8 +68,16 @@ public class JitEvolutionLanguageServer implements LanguageServer, LanguageClien
     public void connect(LanguageClient languageClient) {
         // Get the client which started this LS.
         var logger = new LanguageClientLogger(languageClient);
-        var context = new JitContext(logger, languageClient, new JitEvolutionHttpClient(config, logger), this.config);
-        this.textDocumentService.setContext(context);
-        this.workspaceService.setContext(context);
+        var progressReportService = new WorkDoneProgressReportService(languageClient);
+        var httpClient = new JitEvolutionHttpClient(config, logger);
+
+        this.textDocumentService.setApi(httpClient);
+        this.textDocumentService.setConfig(config);
+        this.textDocumentService.setLogger(logger);
+        this.textDocumentService.setProgressReportService(progressReportService);
+
+        this.workspaceService.setApi(httpClient);
+        this.workspaceService.setLogger(logger);
+        this.workspaceService.setConfig(config);
     }
 }
