@@ -18,7 +18,7 @@ public class ServerLauncher {
         // As we are using system std io channels
         // we need to reset and turn off the logging globally
         // So our client->server communication doesn't get interrupted.
-        Configuration config = new Configuration(args[0], args[1], projectId, args[2], args[3]);
+        Configuration config = new Configuration(args[0], args[1], args[2], args[3]);
         LogManager.getLogManager().reset();
         Logger globalLogger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
         globalLogger.setLevel(Level.OFF);
